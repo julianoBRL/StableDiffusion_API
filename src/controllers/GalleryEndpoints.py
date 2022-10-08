@@ -1,7 +1,7 @@
 from flask_restx import Resource
-from src.models.ImageModel import ImageDB
-from src.models.JobModel import JobDB
-from src.models.UserModel import UsersDB
+from src.objects.ImageModel import ImageDB
+from src.objects.JobModel import JobDB
+from src.objects.UserModel import UsersDB
 from src.services.Server import server
 from flask import Response, jsonify, request
 from flask_jwt_extended import jwt_required

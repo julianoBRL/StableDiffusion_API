@@ -5,7 +5,7 @@ from src.services.Server import server
 from flask import request
 from flask_jwt_extended import current_user
 from flask_jwt_extended import jwt_required
-from src.models.JobModel import JobDB
+from src.objects.JobModel import JobDB
 from threading import Thread
 from queue import Queue
 

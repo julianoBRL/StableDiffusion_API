@@ -5,7 +5,7 @@ from random import randint
 from torch import autocast
 from slugify import slugify
 from src.services.Server import server
-from src.models.ImageModel import ImageDB
+from src.objects.ImageModel import ImageDB
 from diffusers import StableDiffusionPipeline
 from src.services.SystemManager import image_grid
 

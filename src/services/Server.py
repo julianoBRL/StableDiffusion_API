@@ -2,7 +2,6 @@ from flask import Flask
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-import os
 
 SQLALCHEMY_DATABASE_URI = "sqlite:///../../project.sqlite3"
 SQLALCHEMY_TRACK_MODIFICATIONS = True

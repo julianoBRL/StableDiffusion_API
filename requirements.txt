@@ -7,4 +7,4 @@ Pillow==9.2.0
 SQLAlchemy==1.4.41
 SQLAlchemy_serializer==1.4.1
 torch==1.12.1
-unicode_slugify==0.1.5
+python_slugify==6.1.2

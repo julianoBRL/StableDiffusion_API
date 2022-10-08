@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from flask_restx import Resource
 from src.services.Server import server
-from src.models.UserModel import UsersDB, UserModel
+from src.objects.UserModel import UsersDB, UserModel
 from flask import jsonify
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import current_user
