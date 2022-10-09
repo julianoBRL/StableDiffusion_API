@@ -7,7 +7,7 @@ from slugify import slugify
 from src.services.Server import server
 from src.objects.ImageModel import ImageDB
 from diffusers import StableDiffusionPipeline
-from src.services.SystemManager import image_grid
+from src.services.SystemManager import image_grid, devices_verification
 
 TOKEN = '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'
 DEFAULT_IMG_QTD = 4
@@ -17,9 +17,13 @@ class StableDiffusion:
     #Always direct the job to the gpu that has more memory available
     def gpu_loadbalance():
         list_available_memory = []
-        for i in range(torch.cuda.device_count()-1):
+        for i in range(torch.cuda.device_count()):
             list_available_memory.append(round(torch.cuda.memory_reserved(i)/1024**3,1))
-        return list_available_memory.index(min(list_available_memory))
+        min_mem = min(list_available_memory)
+        mim_mem_index = list_available_memory.index(min_mem)
+        print("redirecting process to GPU-"+str(mim_mem_index)+" with "+str(min_mem)+"GB free.")
+        return mim_mem_index
+
         
     def initialize_model(self,mode=0):
         model = ''
