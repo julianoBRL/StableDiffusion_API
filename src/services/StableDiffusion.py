@@ -13,6 +13,7 @@ TOKEN = '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'
 DEFAULT_IMG_QTD = 4
 
 class StableDiffusion:
+        
     def initialize_model(self,mode=0):
         model = ''
         if "stable-diffusion-v1.4" in os.listdir("models"):
@@ -26,7 +27,9 @@ class StableDiffusion:
             )
             model.save_pretrained('models/stable-diffusion-v1.4')
 
-        model.to('cuda')
+        # you can set the device on 0 ou 1, create LoadBalancer
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        model.to(device)
         if mode == 1: model.enable_attention_slicing()
         model.device
         print("Model loaded!!!")
