@@ -1,4 +1,5 @@
 from src.services.Server import server
+from src.services.SystemManager import check_essentials, download_model
 
 #Controllers
 from src.controllers.UserEndpoints import *
@@ -11,4 +12,6 @@ from src.objects.ImageModel import *
 from src.objects.JobModel import *
 
 if __name__ == '__main__':
+    download_model()
+    check_essentials()
     server.run()
