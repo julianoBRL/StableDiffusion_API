@@ -12,6 +12,6 @@ from src.objects.ImageModel import *
 from src.objects.JobModel import *
 
 if __name__ == '__main__':
-    download_model()
     check_essentials()
+    download_model()
     server.run()
