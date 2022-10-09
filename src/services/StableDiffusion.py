@@ -46,7 +46,7 @@ class StableDiffusion:
         print("Model loaded!!!")
         return model
     
-    def generate(self,prompt,job_id, queue, ar="512x512"):
+    def generate(self,prompt,job_id, queue, ar="512x512",style=100):
         print(f'generating {DEFAULT_IMG_QTD} new images for prompt: {prompt}')
         resolution_s = ar.split('x')
         image_set_names = [];
@@ -56,7 +56,7 @@ class StableDiffusion:
             for r in range(DEFAULT_IMG_QTD):
                 output = model_intern(
                     prompt,
-                    num_inference_steps=100,           # diffusion iterations default 50
+                    num_inference_steps=style,           # diffusion iterations default 50
                     guidance_scale=7.5,               # adherence to text, default 7.5
                     width=int(resolution_s[0]),       # image width, default 512
                     height=int(resolution_s[1])       # image height, default 512
