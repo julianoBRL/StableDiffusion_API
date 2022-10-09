@@ -46,11 +46,11 @@ def image_grid(imgs, rows, cols):
     return grid
 
 def download_model():
-    if "stable-diffusion-v1.4" not in os.listdir("models"):
+    if "stable-diffusion-v1-4" not in os.listdir("models"):
         model = StableDiffusionPipeline.from_pretrained(
                 'CompVis/stable-diffusion-v1-4',
                 use_auth_token=TOKEN,
                 revision='fp16',
                 torch_dtype=torch.float16,
             )
-        model.save_pretrained('models/stable-diffusion-v1.4')
+        model.save_pretrained('models/stable-diffusion-v1-4')
