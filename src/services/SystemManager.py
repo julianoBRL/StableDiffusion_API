@@ -3,6 +3,8 @@ import PIL
 from diffusers import StableDiffusionPipeline
 import torch
 
+TOKEN = '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'
+
 def devices_verification(self):
     # setting device on GPU if available, else CPU
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -13,7 +15,7 @@ def devices_verification(self):
     print('GPU Device name:', torch.cuda.get_device_name(torch.cuda.current_device()))
     print("########################################")
     print('Using device:', device)
-    print()
+    print("########################################")
 
     #Additional Info when using cuda
     if device.type == 'cuda':
@@ -21,7 +23,9 @@ def devices_verification(self):
         print('Memory Usage:')
         print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**3,1), 'GB')
         print('Cached:   ', round(torch.cuda.memory_reserved(0)/1024**3,1), 'GB')
-    print("########################################")
+        print("########################################")
+
+    print()
 
 def check_essentials():
     isExistModels = os.path.exists("models")
