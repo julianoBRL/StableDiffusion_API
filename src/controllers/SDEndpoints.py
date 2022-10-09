@@ -19,16 +19,19 @@ class SDManagment(Resource):
     @api.response(401, "Authorization key missing!")
     def get(self):
         args = request.args
-        
+
         promtp = args["prompt"]
-        resolution = args["ar"] if not None else "512x512"
-        style = args["style"]
-        
+        resolution = "512x512"
+        style = 100
+
+        if "ar" in args: resolution = args["ar"]
+        if "style" in args: style = args["style"]
+
         __add = JobDB(promtp,current_user.id,resolution)
         server.db.session.add(__add)
         server.db.session.commit()
         response = Queue()
-        thread = Thread(target=stableDiffusion.generate, args=(args["prompt"],__add.id,response,resolution,), daemon=True)
+        thread = Thread(target=stableDiffusion.generate, args=(args["prompt"],__add.id,response,resolution,style,))
         thread.start()
         thread.join()
         result = response.get()
