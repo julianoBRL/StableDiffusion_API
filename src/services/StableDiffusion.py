@@ -13,22 +13,29 @@ TOKEN = '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'
 DEFAULT_IMG_QTD = 4
 
 class StableDiffusion:
+    
+    #Always direct the job to the gpu that has more memory available
+    def gpu_loadbalance():
+        list_available_memory = []
+        for i in range(torch.cuda.device_count()-1):
+            list_available_memory.append(round(torch.cuda.memory_reserved(i)/1024**3,1))
+        return list_available_memory.index(min(list_available_memory))
         
     def initialize_model(self,mode=0):
         model = ''
         if "stable-diffusion-v1.4" in os.listdir("models"):
-            model = StableDiffusionPipeline.from_pretrained('models/stable-diffusion-v1.4')
+            model = StableDiffusionPipeline.from_pretrained('CompVis/stable-diffusion-v-1-4-original')
         else:
             model = StableDiffusionPipeline.from_pretrained(
-                'CompVis/stable-diffusion-v1-4',
+                'CompVis/stable-diffusion-v-1-4-original',
                 use_auth_token=TOKEN,
                 revision='fp16',
                 torch_dtype=torch.float16,
             )
-            model.save_pretrained('models/stable-diffusion-v1.4')
+            model.save_pretrained('CompVis/stable-diffusion-v-1-4-original')
 
         # you can set the device on 0 ou 1, create LoadBalancer
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda:"+str(self.gpu_loadbalance()) if torch.cuda.is_available() else "cpu")
         model.to(device)
         if mode == 1: model.enable_attention_slicing()
         model.device
@@ -63,6 +70,7 @@ class StableDiffusion:
         server.db.session.add(ImageDB(image_name,prompt,image_name,job_id))
         server.db.session.commit()
         image_set_names.append(image_name)
+        torch.cuda.empty_cache()
         queue.put(image_set_names)
     
 stableDiffusion = StableDiffusion()
