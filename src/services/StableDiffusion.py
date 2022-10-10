@@ -64,7 +64,7 @@ class StableDiffusion:
         image_name = f'{time()}_{slugify(prompt[:100])}_grid.png'
         grid_image = image_grid(image_set,2,2)
         grid_image.save(f'images/{image_name}')
-        __image_id = ImageDB(image_name,prompt,image_name,job_id)
+        __image_id = ImageDB(image_name,prompt,image_name,job_id,int(resolution_s[0]),int(resolution_s[1]))
         server.db.session.add(__image_id)
         server.db.session.commit()
         torch.cuda.empty_cache()
