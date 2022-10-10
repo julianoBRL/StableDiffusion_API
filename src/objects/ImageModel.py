@@ -22,11 +22,13 @@ class ImageDB(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, default=datetime.now())
     created_by = db.Column(db.Integer)
    
-    def __init__(self, name, prompt, uri, created_by):
+    def __init__(self, name, prompt, uri, created_by, ar_width, ar_height):
         self.name = name
         self.prompt = prompt
         self.uri = uri
         self.created_by = created_by
+        self.ar_width = ar_width
+        self.ar_height = ar_height
 
 ImageModel = api.model('Image', {
     'prompt': fields.String(required=True, description='prompt used to generate the image')
