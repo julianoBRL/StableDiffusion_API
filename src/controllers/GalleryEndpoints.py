@@ -5,6 +5,8 @@ from src.objects.UserModel import UsersDB
 from src.services.Server import server
 from flask import Response, jsonify, request
 from flask_jwt_extended import jwt_required
+import io
+from PIL import Image
 
 app, api = server.app, server.api
 api = api.namespace('Gallery', description='Gallery managment')
@@ -32,9 +34,17 @@ class GalleryUpscale(Resource):
         image_id = request.args.get("image_id")
         grid_opt = request.args.get("grid_opt")
         image = ImageDB.query.filter_by(id=image_id).first()
-        with open(f'./images/{image.uri}', "rb") as f:
-            data12 = f.read()
-        return Response(response=data12, status=200, mimetype="image/png")
+        im = Image.open(f'./images/{image.uri}')
+        left = 155
+        top = 65
+        right = 360
+        bottom = 270
+        im1 = im.crop((left, top, right, bottom))
+        
+        img_byte_arr = io.BytesIO()
+        im1.save(img_byte_arr, format='PNG')
+        img_byte_arr = img_byte_arr.getvalue()
+        return Response(response=img_byte_arr, status=200, mimetype="image/png")
     
 class GalleryGetAll(Resource):
     
