@@ -57,4 +57,4 @@ class GalleryGetAll(Resource):
     
 api.add_resource(GalleryManagment, '', endpoint='galery manager')
 api.add_resource(GalleryGetAll, '/all', endpoint='complete galley')
-api.add_resource(GalleryGetAll, '/upscale', endpoint='image upscaler')
+api.add_resource(GalleryUpscale, '/upscale', endpoint='image upscaler')
