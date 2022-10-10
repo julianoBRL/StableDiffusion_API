@@ -1,4 +1,5 @@
 from flask_restx import Resource
+from torch import equal
 from src.objects.ImageModel import ImageDB
 from src.objects.JobModel import JobDB
 from src.objects.UserModel import UsersDB
@@ -31,23 +32,21 @@ class GalleryUpscale(Resource):
     @api.response(200, "Images")
     @api.response(401, "Authorization key missing!")
     def get(self):
-        image_id = request.args.get("image_id")
-        grid_opt = request.args.get("grid_opt")
+        image_id = int(request.args.get("image_id"))
+        grid_opt = int(request.args.get("grid_opt"))
         image = ImageDB.query.filter_by(id=image_id).first()
         im = Image.open(f'./images/{image.uri}')
                 
-        images_cuts=[
-            #(left, top, right, bottom)
-            (0, 0, image.ar_width, image.ar_height),
-            (image.ar_width, 0, image.ar_width*2, image.ar_height),
-            (0, image.ar_height, image.ar_width, image.ar_height*2),
-            (image.ar_width, image.ar_height, image.ar_width*2, image.ar_height*2)
-        ]
-        
-        im1 = im.crop(images_cuts[int(grid_opt)])
+        img_out = None
+        if grid_opt==1: img_out=im.crop((0, 0, image.ar_width, image.ar_height))
+        if grid_opt==2: img_out=im.crop((image.ar_width, 0, image.ar_width*2, image.ar_height))
+        if grid_opt==3: img_out=im.crop((0, image.ar_height, image.ar_width, image.ar_height*2))
+        if grid_opt==4: img_out=im.crop((image.ar_width, image.ar_height, image.ar_width*2, image.ar_height*2))
+        if grid_opt>4 or grid_opt<1:
+            return Response(status=401)
         
         img_byte_arr = io.BytesIO()
-        im1.save(img_byte_arr, format='PNG')
+        img_out.save(img_byte_arr, format='PNG')
         img_byte_arr = img_byte_arr.getvalue()
         return Response(response=img_byte_arr, status=200, mimetype="image/png")
     
