@@ -17,8 +17,22 @@ class GalleryManagment(Resource):
     @api.response(401, "Authorization key missing!")
     def get(self):
         resource = request.args.get("image")
-        print("ia_viewer")
         with open(f'./images/{resource}', "rb") as f:
+            data12 = f.read()
+        return Response(response=data12, status=200, mimetype="image/png")
+    
+    
+class GalleryUpscale(Resource):
+    
+    @jwt_required()
+    @api.doc('GET user profile')
+    @api.response(200, "Images")
+    @api.response(401, "Authorization key missing!")
+    def get(self):
+        image_id = request.args.get("image_id")
+        grid_opt = request.args.get("grid_opt")
+        image = ImageDB.query.filter_by(id=image_id).first()
+        with open(f'./images/{image.uri}', "rb") as f:
             data12 = f.read()
         return Response(response=data12, status=200, mimetype="image/png")
     
@@ -43,3 +57,4 @@ class GalleryGetAll(Resource):
     
 api.add_resource(GalleryManagment, '', endpoint='galery manager')
 api.add_resource(GalleryGetAll, '/all', endpoint='complete galley')
+api.add_resource(GalleryGetAll, '/upscale', endpoint='complete galley')
