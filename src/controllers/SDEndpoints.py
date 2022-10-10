@@ -38,6 +38,5 @@ class SDManagment(Resource):
         with open(f'./images/{result.image_name}', "rb") as f:
             data12 = f.read()
         return Response(response=data12, status=200, mimetype="image/png", headers={"image_id": result.image_id})
-        #return result
     
 api.add_resource(SDManagment, '', endpoint='StableDiffusion manager')
