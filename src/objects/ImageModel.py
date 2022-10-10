@@ -17,6 +17,8 @@ class ImageDB(db.Model, SerializerMixin):
     name = db.Column(db.String(100))
     prompt = db.Column(db.String(100))
     uri = db.Column(db.String(50), unique = True)
+    ar_width = db.Column(db.Integer)
+    ar_height = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.now())
     created_by = db.Column(db.Integer)
    
