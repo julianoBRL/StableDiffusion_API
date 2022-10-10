@@ -2,7 +2,7 @@ from concurrent.futures import thread
 from flask_restx import Resource
 from src.services.StableDiffusion import stableDiffusion
 from src.services.Server import server
-from flask import request
+from flask import Response, request
 from flask_jwt_extended import current_user
 from flask_jwt_extended import jwt_required
 from src.objects.JobModel import JobDB
@@ -35,6 +35,7 @@ class SDManagment(Resource):
         thread.start()
         thread.join()
         result = response.get()
-        return result
+        return Response(response=result.read(), status=200, mimetype="image/png")
+        #return result
     
 api.add_resource(SDManagment, '', endpoint='StableDiffusion manager')

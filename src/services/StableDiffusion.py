@@ -1,7 +1,6 @@
 import os
 import torch
 from time import time
-from random import randint
 from torch import autocast
 from slugify import slugify
 from src.services.Server import server
@@ -14,7 +13,6 @@ DEFAULT_IMG_QTD = 4
 
 class StableDiffusion:
     
-    #Always direct the job to the gpu that has more memory available
     def gpu_loadbalance(self):
         list_available_memory = []
         for i in range(torch.cuda.device_count()):
@@ -24,7 +22,6 @@ class StableDiffusion:
         print("redirecting process to GPU-"+str(mim_mem_index)+" with "+str(min_mem)+"GB free.")
         return mim_mem_index
 
-        
     def initialize_model(self,mode=0):
         model = ''
         if "stable-diffusion-v1-4" in os.listdir("models"):
@@ -56,25 +53,28 @@ class StableDiffusion:
             for r in range(DEFAULT_IMG_QTD):
                 output = model_intern(
                     prompt,
-                    num_inference_steps=style,           # diffusion iterations default 50
+                    num_inference_steps=style,        # diffusion iterations default 50
                     guidance_scale=7.5,               # adherence to text, default 7.5
                     width=int(resolution_s[0]),       # image width, default 512
                     height=int(resolution_s[1])       # image height, default 512
                 )
 
                 image = output['sample'][0]
-                image_name = f'{time()}_{slugify(prompt[:100])}.png'
-                image.save(f'images/{image_name}')
-                image_set_names.append(image_name)
+                #image_name = f'{time()}_{slugify(prompt[:100])}.png'
+                #image.save(f'images/{image_name}')
+                #image_set_names.append(image_name)
                 image_set.append(image)
-                server.db.session.add(ImageDB(image_name,prompt,image_name,job_id))
-                server.db.session.commit()
+                #server.db.session.add(ImageDB(image_name,prompt,image_name,job_id))
+                #server.db.session.commit()
+                
         image_name = f'{time()}_{slugify(prompt[:100])}_grid.png'
-        image_grid(image_set,2,2).save(f'images/{image_name}')
+        grid_image = image_grid(image_set,2,2)
+        grid_image.save(f'images/{image_name}')
         server.db.session.add(ImageDB(image_name,prompt,image_name,job_id))
         server.db.session.commit()
-        image_set_names.append(image_name)
+        #image_set_names.append(image_name)
         torch.cuda.empty_cache()
-        queue.put(image_set_names)
+        queue.put(grid_image)
+        #queue.put(image_set_names)
     
 stableDiffusion = StableDiffusion()
