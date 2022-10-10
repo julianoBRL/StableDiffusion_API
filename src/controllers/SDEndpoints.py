@@ -35,7 +35,9 @@ class SDManagment(Resource):
         thread.start()
         thread.join()
         result = response.get()
-        return Response(response=result.read(), status=200, mimetype="image/png")
+        with open(f'./images/{result}', "rb") as f:
+            data12 = f.read()
+        return Response(response=data12, status=200, mimetype="image/png")
         #return result
     
 api.add_resource(SDManagment, '', endpoint='StableDiffusion manager')

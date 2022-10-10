@@ -74,7 +74,7 @@ class StableDiffusion:
         server.db.session.commit()
         #image_set_names.append(image_name)
         torch.cuda.empty_cache()
-        queue.put(grid_image)
+        queue.put(image_name)
         #queue.put(image_set_names)
     
 stableDiffusion = StableDiffusion()
