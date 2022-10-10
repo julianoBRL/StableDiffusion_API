@@ -35,13 +35,13 @@ class GalleryUpscale(Resource):
         grid_opt = request.args.get("grid_opt")
         image = ImageDB.query.filter_by(id=image_id).first()
         im = Image.open(f'./images/{image.uri}')
-        
+                
         images_cuts=[
             #(left, top, right, bottom)
             (0, 0, image.ar_width, image.ar_height),
-            (image.ar_width, 0, 0, image.ar_height),
-            (0, image.ar_height, image.ar_width, 0),
-            (image.ar_width, image.ar_height, 0, 0)
+            (image.ar_width, 0, image.ar_width*2, image.ar_height),
+            (0, image.ar_height, image.ar_width, image.ar_height*2),
+            (image.ar_width, image.ar_height, image.ar_width*2, image.ar_height*2)
         ]
         
         im1 = im.crop(images_cuts[int(grid_opt)])
