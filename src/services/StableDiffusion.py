@@ -46,7 +46,6 @@ class StableDiffusion:
     def generate(self,prompt,job_id, queue, ar="512x512",style=100):
         print(f'generating {DEFAULT_IMG_QTD} new images for prompt: {prompt}')
         resolution_s = ar.split('x')
-        image_set_names = [];
         image_set = []
         model_intern = self.initialize_model()
         with autocast('cuda'):
@@ -60,21 +59,15 @@ class StableDiffusion:
                 )
 
                 image = output['sample'][0]
-                #image_name = f'{time()}_{slugify(prompt[:100])}.png'
-                #image.save(f'images/{image_name}')
-                #image_set_names.append(image_name)
                 image_set.append(image)
-                #server.db.session.add(ImageDB(image_name,prompt,image_name,job_id))
-                #server.db.session.commit()
                 
         image_name = f'{time()}_{slugify(prompt[:100])}_grid.png'
         grid_image = image_grid(image_set,2,2)
         grid_image.save(f'images/{image_name}')
-        server.db.session.add(ImageDB(image_name,prompt,image_name,job_id))
+        __image_id = ImageDB(image_name,prompt,image_name,job_id)
+        server.db.session.add(__image_id)
         server.db.session.commit()
-        #image_set_names.append(image_name)
         torch.cuda.empty_cache()
-        queue.put(image_name)
-        #queue.put(image_set_names)
+        queue.put({"image_name": image_name, "image_id": __image_id.id})
     
 stableDiffusion = StableDiffusion()
