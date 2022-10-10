@@ -1,5 +1,4 @@
 from flask_restx import Resource
-from torch import equal
 from src.objects.ImageModel import ImageDB
 from src.objects.JobModel import JobDB
 from src.objects.UserModel import UsersDB
@@ -8,6 +7,8 @@ from flask import Response, jsonify, request
 from flask_jwt_extended import jwt_required
 import io
 from PIL import Image
+from time import time
+from slugify import slugify
 
 app, api = server.app, server.api
 api = api.namespace('Gallery', description='Gallery managment')
@@ -36,6 +37,9 @@ class GalleryUpscale(Resource):
         grid_opt = int(request.args.get("grid_opt"))
         image = ImageDB.query.filter_by(id=image_id).first()
         im = Image.open(f'./images/{image.uri}')
+        
+        if "grid" not in image.uri.split('_'):
+            return Response(response="not a grid image" ,status=401)
                 
         img_out = None
         if grid_opt==1: img_out=im.crop((0, 0, image.ar_width, image.ar_height))
@@ -45,9 +49,14 @@ class GalleryUpscale(Resource):
         if grid_opt>4 or grid_opt<1:
             return Response(status=401)
         
+        image_name = f'{time()}_{slugify(image.prompt[:100])}_grid_{grid_opt}.png'
+        
         img_byte_arr = io.BytesIO()
         img_out.save(img_byte_arr, format='PNG')
         img_byte_arr = img_byte_arr.getvalue()
+        __image_id = ImageDB(image_name,image.prompt,image_name,image.job_id,int(image.ar_width),int(image.ar_width))
+        server.db.session.add(__image_id)
+        server.db.session.commit()
         return Response(response=img_byte_arr, status=200, mimetype="image/png")
     
 class GalleryGetAll(Resource):
